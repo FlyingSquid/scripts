@@ -51,4 +51,4 @@ make check
 make install
 
 # Start proxy
-$INSTALL_DIR/trafficserver start
+$INSTALL_DIR/bin/trafficserver start
