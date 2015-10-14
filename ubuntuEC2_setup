@@ -18,11 +18,12 @@ apt-get install -y git \
                    autoconf \
                    automake \
                    build-essential \
+                   make \
                    pkg-config \
                    libtool \
                    libssl-dev \
-                   tcl \
-                   expat \
+                   tcl-dev \
+                   libexpat-dev \
                    libpcre3 libpcre3-dev \
                    libcap-dev \
                    flex \
