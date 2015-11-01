@@ -1,0 +1,20 @@
+# Declare a simulator
+set ns [new Simulator]                  
+source tb_compat.tcl
+
+# Define the nodes in the topology
+set server [$ns node]
+set client [$ns node]
+
+# Define a full speed LAN between client and server
+set lan0 [$ns make-lan "$client $server " 100Mb 0ms]
+
+# Set the OS on the nodes
+tb-set-node-os $server RHL-STD
+tb-set-node-os $client RHL-STD         
+
+# Enable static routing
+$ns rtproto Static
+
+# Start the simulation
+$ns run
