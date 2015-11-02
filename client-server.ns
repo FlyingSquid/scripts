@@ -10,8 +10,8 @@ set client [$ns node]
 set lan0 [$ns make-lan "$client $server " 100Mb 0ms]
 
 # Set the OS on the nodes
-tb-set-node-os $server RHL-STD
-tb-set-node-os $client RHL-STD         
+tb-set-node-os $server UBUNTU14-64-STD
+tb-set-node-os $client UBUNTU14-64-STD         
 
 # Enable static routing
 $ns rtproto Static
