@@ -1,7 +1,7 @@
 #!/bin/bash -ex
 
 ###############################################################################
-# ubuntuEC2_setup
+# ubuntuEC2_setup.sh
 # 
 # Setup script for installing Apache Traffic Server from source
 # - code is cloned from GitHub into $STORAGE_DIR
