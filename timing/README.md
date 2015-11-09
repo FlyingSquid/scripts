@@ -4,7 +4,7 @@
 
 `Python`, `ApacheBench`, and `gnuplot` must be installed.
 
-Wrapper for [ApacheBench](http://httpd.apache.org/docs/2.0/programs/ab.html) for timing HTTP requests.
+Wrapper for [ApacheBench](http://httpd.apache.org/docs/current/programs/ab.html) for timing HTTP requests.
 
         usage: timing_ats_http.py [-h] [-g] [-x PROXY] [-n NUM_REQUESTS]
                           [-c CONCURRENT_REQUESTS]
