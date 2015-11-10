@@ -59,10 +59,10 @@ def main():
             else:
                 out += '<table>'+proc.communicate()[0].split('<table >')[1]+'<hr>'
         if args.gnuplot:
-            out_file_name += '.txt'
+            out_file_name = timestamp+'-benchmarking.txt'
         else:
             out += '</body></html>'
-            out_file_name += '.html'
+            out_file_name = timestamp+'-benchmarking.html'
 
         with open(out_file_name, 'w') as f:
             f.write(out)
