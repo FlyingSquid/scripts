@@ -38,7 +38,7 @@ def main():
         timestamp = str(time.time())
         out = ''
         if not args.gnuplot:
-            out = '<html><body><h2>Timing HTTP Requests @ '+timestamp+'</h2><hr>'
+            out = '<h2>Timing HTTP Requests @ '+timestamp+'</h2><hr>'
         for url in f:
             url = url.strip()
             output = '-w'
@@ -61,7 +61,6 @@ def main():
         if args.gnuplot:
             out_file_name = timestamp+'-benchmarking.txt'
         else:
-            out += '</body></html>'
             out_file_name = timestamp+'-benchmarking.html'
 
         with open(out_file_name, 'w') as f:
