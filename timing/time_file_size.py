@@ -16,7 +16,6 @@ GNUPLOT_FORMAT = 'gnuplot -e "out_file=\'%s.jpeg\'" \
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('urls_file', help='file containing URLs to test')
-    #parser.add_argument('res_dir', help='directory to write results to')
     parser.add_argument('-g', '--gnuplot', action='store_true',
         help='output to gnuplot format instead of HTML')
     parser.add_argument('-x', '--proxy', default='',
@@ -38,15 +37,8 @@ def main():
         timestamp = str(time.time())
         out = ''
         data = ''
-        #if not args.gnuplot:
-        #    out = '<h2>Timing HTTP Requests @ '+timestamp+'</h2><hr>'
         for url in f:
             url = url.strip()
-            #output = '-w'
-            #out_file_name = args.res_dir+timestamp+'-'+ \
-            #    url.replace('/', '').replace(':', '')
-            #if args.gnuplot:
-            #    output = '-g '+out_file_name+'.tsv'
             ab_command = AB_FORMAT % (args.proxy, args.concurrent_requests,
                                       args.num_requests, url)
             proc = subprocess.Popen(ab_command, stdout=subprocess.PIPE,
@@ -61,15 +53,8 @@ def main():
                 print ms
                 data += size + '\t' + ms + '\n'
                 print data
-                #gnuplot_command = GNUPLOT_FORMAT % (out_file_name, out_file_name,
-                #    url+' n='+str(args.num_requests)+' c='+str(args.concurrent_requests))
-                #subprocess.call(gnuplot_command, shell=True)
-            #else:
-            #    out += '<table>'+proc.communicate()[0].split('<table >')[1]+'<hr>'
         if args.gnuplot:
             out_file_name = timestamp+'-benchmarking.txt'
-        #else:
-        #    out_file_name = timestamp+'-benchmarking.html'
 
         with open(out_file_name, 'w') as f:
             f.write(out)

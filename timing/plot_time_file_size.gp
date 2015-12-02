@@ -23,5 +23,5 @@ set ylabel "response time (ms)"
 # Use tabs as the delimiter
 set datafile separator '\t'
 # Plot the data
-plot data_file using 1:2 title 'response time' with points
+plot data_file using 1:2 title 'response time' with lines
 exit
