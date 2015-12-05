@@ -6,7 +6,7 @@ S3_INC_DIR=aws-sdk-cpp/aws-sdk-cpp/aws-cpp-sdk-s3/include/aws/s3
 CORE_INC_DIR=aws-sdk-cpp/aws-sdk-cpp/aws-cpp-sdk-core/include/aws/core
 LIBS=-laws-cpp-sdk-core -laws-cpp-sdk-s3
 CFLAGS=$(DEBUG) $(DEFINES) $(WARNINGS) -c
-LDFLAGS=$(DEBUG) $(DEFINE) $(WARNINGS) -o
+LDFLAGS=$(DEBUG) $(DEFINES) $(WARNINGS) -o
 SOURCES=s3.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=s3
