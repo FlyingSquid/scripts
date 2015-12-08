@@ -15,7 +15,6 @@ typedef struct put_object_callback_data
 
 class S3API {
     public:
-
         S3API(char accessKey[], char secretKey[]);
         ~S3API();
         void listService(const char host[]);
@@ -25,7 +24,6 @@ class S3API {
                                                     const char key[]);
 
     private:
-        
         static S3Status responsePropertiesCallback(
                 const S3ResponseProperties *properties, void *callbackData);
         static void responseCompleteCallback(S3Status status,

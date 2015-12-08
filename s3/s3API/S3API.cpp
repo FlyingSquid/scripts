@@ -3,6 +3,8 @@
 S3Status S3API::statusG;
 char S3API::errorDetailsG[4096] = { 0 };
 
+//---------------PUBLIC FUNCTIONS---------------//
+
 S3API::S3API(char accessKey[], char secretKey[])
 {
     this -> accessKey = accessKey;
@@ -17,6 +19,108 @@ S3API::~S3API()
 {
     ;
 }
+
+void S3API::listService(const char host[])
+{
+    S3_initialize("s3", S3_INIT_ALL, host);
+
+    bool headerPrinted = false;
+
+    S3ListServiceHandler listServiceHandler = {
+        responseHandler,
+        &listServiceCallback
+    };
+
+    S3_list_service(S3ProtocolHTTP, accessKey, secretKey, NULL, NULL,
+                                NULL, &listServiceHandler, &headerPrinted);
+    
+    if (statusG != S3StatusOK) {
+        printError();
+    }
+
+    S3_deinitialize();
+}
+
+void S3API::putObject(const char host[], const char bucketName[],
+                                const char key[], const char file[])
+{
+    S3_initialize("s3", S3_INIT_ALL, host);
+
+    put_object_callback_data data;
+    struct stat statbuf;
+
+    if (stat(file, &statbuf) == -1) {
+        fprintf(stderr, "\nERROR: Failed to stat file %s: ", file);
+        perror(0);
+        exit(-1);
+    }
+
+    int contentLength = statbuf.st_size;
+    data.contentLength = contentLength;
+
+    if (!(data.infile = fopen(file, "r"))) {
+        fprintf(stderr, "\nERROR: Failed to open input file %s: ", file);
+        perror(0);
+        exit(-1);
+    }
+
+    const char contentType[] = "text/plain";
+    
+    S3BucketContext bucketContext = {
+        host,
+        bucketName,
+        S3ProtocolHTTP,
+        S3UriStylePath,
+        accessKey,
+        secretKey
+    };
+
+    S3PutObjectHandler putObjectHandler = {
+        responseHandler,
+        &putObjectDataCallback
+    };
+
+    S3_put_object(&bucketContext, key, contentLength, NULL, NULL,
+                                            &putObjectHandler, &data);
+
+    if (statusG != S3StatusOK) {
+        printError();
+    }
+
+    S3_deinitialize();
+}
+
+void S3API::getObject(const char host[], const char bucketName[],
+                                                    const char key[])
+{
+    S3_initialize("s3", S3_INIT_ALL, host);
+
+    S3GetObjectHandler getObjectHandler = {
+        responseHandler,
+        &getObjectDataCallback
+    };
+
+    S3BucketContext bucketContext = {
+        host,
+        bucketName,
+        S3ProtocolHTTP,
+        S3UriStylePath,
+        accessKey,
+        secretKey
+    };
+
+    FILE *outfile = stdout;
+    
+    S3_get_object(&bucketContext, key, NULL, 0, 0, NULL,
+                                        &getObjectHandler, outfile);
+    if (statusG != S3StatusOK) {
+        printError();
+    }
+
+    S3_deinitialize();
+}
+
+//---------------PRIVATE FUNCTIONS---------------//
 
 S3Status S3API::responsePropertiesCallback(const S3ResponseProperties 
                                        *properties, void *callbackData)
@@ -96,27 +200,6 @@ S3Status S3API::listServiceCallback(const char *ownerId,
         return S3StatusOK;
 }
 
-void S3API::listService(const char host[])
-{
-    S3_initialize("s3", S3_INIT_ALL, host);
-
-    bool headerPrinted = false;
-
-    S3ListServiceHandler listServiceHandler = {
-        responseHandler,
-        &listServiceCallback
-    };
-
-    S3_list_service(S3ProtocolHTTP, accessKey, secretKey, NULL, NULL,
-                                NULL, &listServiceHandler, &headerPrinted);
-    
-    if (statusG != S3StatusOK) {
-        printError();
-    }
-
-    S3_deinitialize();
-}
-
 int S3API::putObjectDataCallback(int bufferSize, char *buffer,
                                                 void *callbackData)
 {
@@ -134,55 +217,6 @@ int S3API::putObjectDataCallback(int bufferSize, char *buffer,
     return ret;
 }
 
-void S3API::putObject(const char host[], const char bucketName[],
-                                const char key[], const char file[])
-{
-    S3_initialize("s3", S3_INIT_ALL, host);
-
-    put_object_callback_data data;
-    struct stat statbuf;
-
-    if (stat(file, &statbuf) == -1) {
-        fprintf(stderr, "\nERROR: Failed to stat file %s: ", file);
-        perror(0);
-        exit(-1);
-    }
-
-    int contentLength = statbuf.st_size;
-    data.contentLength = contentLength;
-
-    if (!(data.infile = fopen(file, "r"))) {
-        fprintf(stderr, "\nERROR: Failed to open input file %s: ", file);
-        perror(0);
-        exit(-1);
-    }
-
-    const char contentType[] = "text/plain";
-    
-    S3BucketContext bucketContext = {
-        host,
-        bucketName,
-        S3ProtocolHTTP,
-        S3UriStylePath,
-        accessKey,
-        secretKey
-    };
-
-    S3PutObjectHandler putObjectHandler = {
-        responseHandler,
-        &putObjectDataCallback
-    };
-
-    S3_put_object(&bucketContext, key, contentLength, NULL, NULL,
-                                            &putObjectHandler, &data);
-
-    if (statusG != S3StatusOK) {
-        printError();
-    }
-
-    S3_deinitialize();
-}
-
 S3Status S3API::getObjectDataCallback(int bufferSize, const char *buffer,
                                                         void *callbackData)
 {
@@ -191,34 +225,4 @@ S3Status S3API::getObjectDataCallback(int bufferSize, const char *buffer,
 
     return ((wrote < (size_t) bufferSize) ?
                     S3StatusAbortedByCallback : S3StatusOK);
-}
-
-void S3API::getObject(const char host[], const char bucketName[],
-                                                    const char key[])
-{
-    S3_initialize("s3", S3_INIT_ALL, host);
-
-    S3GetObjectHandler getObjectHandler = {
-        responseHandler,
-        &getObjectDataCallback
-    };
-
-    S3BucketContext bucketContext = {
-        host,
-        bucketName,
-        S3ProtocolHTTP,
-        S3UriStylePath,
-        accessKey,
-        secretKey
-    };
-
-    FILE *outfile = stdout;
-    
-    S3_get_object(&bucketContext, key, NULL, 0, 0, NULL,
-                                        &getObjectHandler, outfile);
-    if (statusG != S3StatusOK) {
-        printError();
-    }
-
-    S3_deinitialize();
 }
