@@ -17,10 +17,14 @@ class S3API {
     public:
         S3API(char accessKey[], char secretKey[]);
         ~S3API();
+        void createBucket(const char host[], const char bucketName[]);
+        void deleteBucket(const char host[], const char bucketName[]);
         void listService(const char host[]);
         void putObject(const char host[], const char bucketName[],
                                 const char key[], const char file[]);
         void getObject(const char host[], const char bucketName[],
+                                                    const char key[]);
+        void deleteObject(const char host[], const char bucketName[],
                                                     const char key[]);
 
     private:
