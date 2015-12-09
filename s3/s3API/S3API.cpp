@@ -20,6 +20,35 @@ S3API::~S3API()
     ;
 }
 
+void S3API::createBucket(const char host[], const char bucketName[])
+{
+    S3_initialize("s3", S3_INIT_ALL, host);
+
+    S3_create_bucket(S3ProtocolHTTP, accessKey, secretKey, NULL, host,
+                    bucketName, S3CannedAclPrivate, NULL, NULL,
+                    &responseHandler, NULL);
+
+    if (statusG != S3StatusOK) {
+        printError();
+    }
+
+    S3_deinitialize();
+}
+
+void S3API::deleteBucket(const char host[], const char bucketName[])
+{
+    S3_initialize("s3", S3_INIT_ALL, host);
+    
+    S3_delete_bucket(S3ProtocolHTTP, S3UriStylePath, accessKey, secretKey,
+                    NULL, host, bucketName, NULL, &responseHandler, NULL);
+
+    if (statusG != S3StatusOK) {
+        printError();
+    }
+
+    S3_deinitialize();
+}
+
 void S3API::listService(const char host[])
 {
     S3_initialize("s3", S3_INIT_ALL, host);
@@ -113,6 +142,34 @@ void S3API::getObject(const char host[], const char bucketName[],
     
     S3_get_object(&bucketContext, key, NULL, 0, 0, NULL,
                                         &getObjectHandler, outfile);
+    if (statusG != S3StatusOK) {
+        printError();
+    }
+
+    S3_deinitialize();
+}
+
+void S3API::deleteObject(const char host[], const char bucketName[],
+                                                    const char key[])
+{
+    S3_initialize("s3", S3_INIT_ALL, host);
+
+    S3BucketContext bucketContext = {
+        host,
+        bucketName,
+        S3ProtocolHTTP,
+        S3UriStylePath,
+        accessKey,
+        secretKey
+    };
+
+    S3ResponseHandler deleteResponseHandler = {
+        NULL,
+        &responseCompleteCallback
+    };
+
+    S3_delete_object(&bucketContext, key, NULL, &deleteResponseHandler, NULL);
+
     if (statusG != S3StatusOK) {
         printError();
     }
