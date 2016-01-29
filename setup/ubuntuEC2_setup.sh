@@ -6,7 +6,7 @@
 # Setup script for installing Apache Traffic Server from source
 # - code is cloned from GitHub into $STORAGE_DIR
 # - Traffic Server is installed in $INSTALL_DIR
-# - run with 'sudo ./ubuntuEC2_setup'
+# - run with './ubuntuEC2_setup'
 ###############################################################################
 
 STORAGE_DIR="/mnt"
@@ -16,9 +16,9 @@ REPO_URL="https://github.com/FlyingSquid/trafficserver.git"
 
 
 # Update/download dependencies
-apt-get update
-apt-get upgrade -y
-apt-get install -y git \
+sudo apt-get update
+sudo apt-get upgrade -y
+sudo apt-get install -y git \
                    autoconf \
                    automake \
                    build-essential \
@@ -53,7 +53,7 @@ make
 make check
 
 # Install to configured location
-make install
+sudo make install
 
 # Start proxy
-$INSTALL_DIR/bin/trafficserver start
+sudo $INSTALL_DIR/bin/trafficserver start
