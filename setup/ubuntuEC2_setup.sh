@@ -34,7 +34,8 @@ sudo apt-get install -y git \
                    hwloc \
                    lua5.2 \
                    libncurses-dev \
-                   curl
+                   curl \
+                   libhiredis-dev
 
 # Clone repo
 mkdir -p $STORAGE_DIR
