@@ -57,4 +57,4 @@ make check
 sudo make install
 
 # Start proxy
-sudo $INSTALL_DIR/bin/trafficserver start
+sudo $INSTALL_DIR/bin/traffic_server
